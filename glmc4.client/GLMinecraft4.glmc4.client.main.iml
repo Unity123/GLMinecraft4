@@ -10,11 +10,15 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="GLMinecraft4.glmc4.common.main" />
+    <orderEntry type="library" name="Gradle: javax.annotation:javax.annotation-api:1.2-b01" level="project" />
+    <orderEntry type="library" name="Gradle: org.joml:joml:1.9.24" level="project" />
+    <orderEntry type="library" name="Gradle: org.lwjgl:lwjgl-assimp:3.2.3" level="project" />
     <orderEntry type="library" name="Gradle: org.lwjgl:lwjgl-glfw:3.2.3" level="project" />
     <orderEntry type="library" name="Gradle: org.lwjgl:lwjgl-openal:3.2.3" level="project" />
     <orderEntry type="library" name="Gradle: org.lwjgl:lwjgl-opengl:3.2.3" level="project" />
     <orderEntry type="library" name="Gradle: org.lwjgl:lwjgl-stb:3.2.3" level="project" />
     <orderEntry type="library" name="Gradle: org.lwjgl:lwjgl:3.2.3" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Gradle: org.lwjgl:lwjgl-assimp:natives-macos:3.2.3" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Gradle: org.lwjgl:lwjgl-glfw:natives-macos:3.2.3" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Gradle: org.lwjgl:lwjgl-openal:natives-macos:3.2.3" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Gradle: org.lwjgl:lwjgl-opengl:natives-macos:3.2.3" level="project" />

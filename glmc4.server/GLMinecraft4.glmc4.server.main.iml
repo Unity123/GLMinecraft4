@@ -10,5 +10,6 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="GLMinecraft4.glmc4.common.main" />
+    <orderEntry type="library" name="Gradle: javax.annotation:javax.annotation-api:1.2-b01" level="project" />
   </component>
 </module>

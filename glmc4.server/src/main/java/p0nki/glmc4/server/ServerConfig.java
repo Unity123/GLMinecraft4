@@ -6,10 +6,10 @@ public class ServerConfig {
     private final long tickLength;
     private final long maxPingDelay;
 
-    public ServerConfig(int port,long tickLength,long maxPingDelay) {
+    public ServerConfig(int port, long tickLength, long maxPingDelay) {
         this.port = port;
-        this.tickLength=tickLength;
-        this.maxPingDelay=maxPingDelay;
+        this.tickLength = tickLength;
+        this.maxPingDelay = maxPingDelay;
     }
 
     public int getPort() {

@@ -10,6 +10,5 @@
 rootProject.name = 'GLMinecraft4'
 include 'glmc4.common'
 include 'glmc4.server'
-include 'GLMinecraft4.glmc4.client'
 include 'glmc4.client'
 

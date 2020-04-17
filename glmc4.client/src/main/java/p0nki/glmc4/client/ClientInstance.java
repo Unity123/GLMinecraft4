@@ -1,5 +1,7 @@
 package p0nki.glmc4.client;
 
+import p0nki.glmc4.client.gl.Utils;
+import p0nki.glmc4.client.gl.Window;
 import p0nki.glmc4.data.PlayerMetadata;
 import p0nki.glmc4.packet.*;
 import p0nki.glmc4.stream.ByteInputStream;
@@ -75,6 +77,7 @@ public class ClientInstance {
                 }
             }
         }).start();
+        startOpenGLThread();
     }
 
     private void startInputThread() {
@@ -97,6 +100,19 @@ public class ClientInstance {
                 }
             }
         }).start();
+    }
+
+    private void startOpenGLThread() throws IOException {
+        Window.initialize();
+        Window.setOpacity(0.5F);
+        Window.setSize(500, 500);
+        Window.setTitle("Your Player ID: " + yourPlayerMetadata.getUuid());
+        while (!Window.shouldClose()) {
+            Utils.clear();
+            Window.endFrame();
+        }
+        socket.close();
+        System.exit(0);
     }
 
     private void startOutputThread() {
