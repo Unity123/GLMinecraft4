@@ -1,6 +1,6 @@
 package p0nki.glmc4.client;
 
-import p0nki.glmc4.client.gl.Utils;
+import p0nki.glmc4.client.gl.GLUtils;
 import p0nki.glmc4.client.gl.Window;
 import p0nki.glmc4.data.PlayerMetadata;
 import p0nki.glmc4.packet.*;
@@ -108,7 +108,7 @@ public class ClientInstance {
         Window.setSize(500, 500);
         Window.setTitle("Your Player ID: " + yourPlayerMetadata.getUuid());
         while (!Window.shouldClose()) {
-            Utils.clear();
+            GLUtils.clear();
             Window.endFrame();
         }
         socket.close();

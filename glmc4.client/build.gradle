@@ -9,6 +9,12 @@ apply plugin: 'application'
 mainClassName = 'p0nki.glmc4.client.GLMC4Client'
 applicationDefaultJvmArgs = ["-XstartOnFirstThread"]
 
+idea {
+    module {
+        inheritOutputDirs = true
+    }
+}
+
 repositories {
     mavenCentral()
     maven {

@@ -2,7 +2,7 @@ package p0nki.glmc4.client.gl;
 
 import org.lwjgl.opengl.GL41;
 
-public class Utils {
+public class GLUtils {
 
     public static void clear() {
         GL41.glClearColor(0.2F, 0.5F, 0.8F, 1);
