@@ -1,31 +1,32 @@
 package p0nki.glmc4.client.gl;
 
 import org.joml.Vector2i;
+import p0nki.glmc4.client.assets.Location;
 
+import java.io.FileNotFoundException;
 import java.nio.ByteBuffer;
-import java.util.Objects;
 
 import static org.lwjgl.opengl.GL41.*;
 import static org.lwjgl.stb.STBImage.stbi_load;
-import static org.lwjgl.stb.STBImage.stbi_set_flip_vertically_on_load;
+//import static org.lwjgl.stb.STBImage.stbi_set_flip_vertically_on_load;
 
 public class Texture {
 
     private final int id;
     private final int width, height;
 
-    public Texture(String name) {
+    public Texture(Location location) throws FileNotFoundException {
         id = glGenTextures();
         glBindTexture(GL_TEXTURE_2D, id);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-        stbi_set_flip_vertically_on_load(true);
+//        stbi_set_flip_vertically_on_load(false);
         int[] w = new int[1];
         int[] h = new int[1];
         int[] comps = new int[1];
-        ByteBuffer data = stbi_load(Objects.requireNonNull(ClassLoader.getSystemClassLoader().getResource(name)).getFile(), w, h, comps, 0);
+        ByteBuffer data = stbi_load(location.getFile().getAbsolutePath(), w, h, comps, 0);
         if (data == null) {
-            throw new AssertionError("Failed to load image");
+            throw new FileNotFoundException("Failed to load image: " + location.getFile().getAbsolutePath());
         }
         int frmt = GL_RGB;
         if (comps[0] == 4) frmt = GL_RGBA;

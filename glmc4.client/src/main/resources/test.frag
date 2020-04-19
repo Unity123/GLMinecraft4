@@ -8,5 +8,5 @@ out vec4 fc;
 
 void main(){
     //    fc=vec4(uv, 0, 1);
-    fc=texture(tex, uv);
+    fc=texture(tex, vec2(uv.x,uv.y));
 }
