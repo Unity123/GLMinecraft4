@@ -20,6 +20,7 @@
     <option name="SKIP_IMPORT_STATEMENTS" value="false" />
   </component>
   <component name="ExternalStorageConfigurationManager" enabled="true" />
+  <component name="GradleMigrationSettings" migrationVersion="1" />
   <component name="GradleSettings">
     <option name="linkedExternalProjectsSettings">
       <GradleProjectSettings>
@@ -70,6 +71,9 @@
       <module fileurl="file://$PROJECT_DIR$/glmc4.common/glmc4.common.iml" filepath="$PROJECT_DIR$/glmc4.common/glmc4.common.iml" />
       <module fileurl="file://$PROJECT_DIR$/glmc4.server/glmc4.server.iml" filepath="$PROJECT_DIR$/glmc4.server/glmc4.server.iml" />
     </modules>
+  </component>
+  <component name="ProjectNotificationSettings">
+    <option name="askShowProject" value="false" />
   </component>
   <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="11" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/out" />

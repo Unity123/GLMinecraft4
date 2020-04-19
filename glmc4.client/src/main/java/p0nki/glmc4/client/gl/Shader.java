@@ -80,6 +80,11 @@ public class Shader {
         glUniform3f(glGetUniformLocation(id, name), value.x, value.y, value.z);
     }
 
+    public void setTexture(String name, Texture value, int unit) {
+        glUniform1i(glGetUniformLocation(id, name), unit);
+        value.bind(unit);
+    }
+
     protected void bind() {
         glUseProgram(id);
     }

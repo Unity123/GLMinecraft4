@@ -3,9 +3,11 @@
 layout (location=0) in vec3 inPos;
 layout (location=1) in vec2 inUV;
 
+uniform mat4 perspective, view;
+
 out vec2 uv;
 
 void main(){
-    gl_Position=vec4(inPos, 1);
+    gl_Position=perspective*view*vec4(inPos, 1);
     uv=inUV;
 }
