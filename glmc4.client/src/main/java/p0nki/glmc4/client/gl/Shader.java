@@ -3,13 +3,11 @@ package p0nki.glmc4.client.gl;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.lwjgl.BufferUtils;
+import p0nki.glmc4.client.assets.ResourceLocation;
 
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.nio.FloatBuffer;
 import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.Objects;
 
 import static org.lwjgl.opengl.GL41.*;
 
@@ -48,9 +46,9 @@ public class Shader {
         }
     }
 
-    public Shader(String name) throws URISyntaxException, IOException {
-        String vertCode = Files.readString(Path.of(Objects.requireNonNull(ClassLoader.getSystemClassLoader().getResource(name + ".vert")).toURI()));
-        String fragCode = Files.readString(Path.of(Objects.requireNonNull(ClassLoader.getSystemClassLoader().getResource(name + ".frag")).toURI()));
+    public Shader(String name) throws IOException {
+        String vertCode = Files.readString(new ResourceLocation("shader/" + name + ".vert").getFile().toPath());
+        String fragCode = Files.readString(new ResourceLocation("shader/" + name + ".frag").getFile().toPath());
 
         this.name = name;
         int vert = glCreateShader(GL_VERTEX_SHADER);

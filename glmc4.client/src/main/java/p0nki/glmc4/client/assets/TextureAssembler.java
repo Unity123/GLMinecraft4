@@ -99,7 +99,10 @@ public class TextureAssembler {
         throw new AssertionError(identifier);
     }
 
+    private final String directory;
+
     private TextureAssembler(String directory) throws IOException {
+        this.directory = directory;
         identifiers = listFiles(directory, Objects.requireNonNull(ClassLoader.getSystemClassLoader().getResource(directory)).getFile());
         images = new HashMap<>();
         for (String s : identifiers.keySet()) {
@@ -135,29 +138,33 @@ public class TextureAssembler {
         writer.close();
     }
 
-    private static final Map<String, Texture> loadedTextures = new HashMap<>();
+    //    private static final Map<String, Texture> loadedTextures = new HashMap<>();
     private static final Map<String, TextureAssembler> assemblers = new HashMap<>();
+    private Texture texture = null;
 
-    public static Texture get(String directory) throws FileNotFoundException {
-        if (!loadedTextures.containsKey(directory))
-            loadedTextures.put(directory, new Texture(new LocalLocation("atlas/" + directory + ".png")));
-        return loadedTextures.get(directory);
+    public Texture getTexture() throws FileNotFoundException {
+        if (texture == null) texture = new Texture(new LocalLocation("atlas/" + directory + ".png"));
+        return texture;
     }
 
-    private static AtlasPosition attemptGet(String directory, String identifier) {
-        if (!assemblers.containsKey(directory)) throw new AssertionError(directory);
-        TextureAssembler assembler = assemblers.get(directory);
-        Image image = assembler.images.get(directory + ":" + identifier);
+    public static TextureAssembler getAssembler(String directory) {
+        return assemblers.get(directory);
+    }
+
+    private AtlasPosition attemptGet(String identifier) {
+        Image image = images.get(directory + ":" + identifier);
         if (image == null) return null;
-        return new AtlasPosition(image.x, image.y, image.width, image.height, assembler.width, assembler.height);
+        return new AtlasPosition(image.x, image.y, image.width, image.height, width, height);
     }
 
-    public static AtlasPosition get(String directory, String identifier) {
-        return Utils.firstNonNull(attemptGet(directory, identifier), attemptGet(directory, identifier + ".png"));
+    public AtlasPosition get(String identifier) {
+        return Utils.firstNonNull(attemptGet(identifier), attemptGet(identifier + ".png"));
     }
 
-    public static void assembleTextures(String directory) throws IOException {
-        assemblers.put(directory, new TextureAssembler(directory));
+    public static TextureAssembler assembleTextures(String directory) throws IOException {
+        TextureAssembler assembler = new TextureAssembler(directory);
+        assemblers.put(directory, assembler);
+        return assembler;
     }
 
 }

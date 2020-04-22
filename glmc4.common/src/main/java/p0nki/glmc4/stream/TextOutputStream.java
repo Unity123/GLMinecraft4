@@ -1,5 +1,6 @@
 package p0nki.glmc4.stream;
 
+import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 
@@ -9,6 +10,12 @@ public class TextOutputStream implements IOutputStream {
 
     public TextOutputStream(OutputStream output) {
         writer = new PrintWriter(output);
+    }
+
+    @Override
+    public void writeByteArray(byte[] value) {
+        writeInt(value.length);
+        for (byte b : value) writeInt(b);
     }
 
     @Override

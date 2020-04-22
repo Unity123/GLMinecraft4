@@ -1,11 +1,10 @@
 package p0nki.glmc4.client.gl;
 
 import java.io.IOException;
-import java.net.URISyntaxException;
 
 public class Shader3D extends Shader {
 
-    public Shader3D(String name) throws IOException, URISyntaxException {
+    public Shader3D(String name) throws IOException {
         super(name);
     }
 

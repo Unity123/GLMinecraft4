@@ -14,6 +14,8 @@ public interface IInputStream {
 
     long readLong() throws IOException;
 
+    byte[] readByteArray() throws IOException;
+
     void close() throws IOException;
 
 }

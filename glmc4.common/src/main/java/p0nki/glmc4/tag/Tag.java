@@ -5,6 +5,7 @@ import p0nki.glmc4.stream.IOutputStream;
 import p0nki.glmc4.utils.AssertUtils;
 
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -67,6 +68,7 @@ public interface Tag {
     int BOOLEAN = 7;
     int ARRAY = 8;
     int MAP = 9;
+    int BYTE_ARRAY = 10;
     Map<Integer, TagSerializer> SERIALIZERS = Map.of(
             CHAR, new TagSerializer() {
                 @Override
@@ -214,6 +216,19 @@ public interface Tag {
                     }
                     return new TagMap(value);
                 }
+            },
+            BYTE_ARRAY, new TagSerializer() {
+                @Override
+                public void write(IOutputStream output, Tag element) throws IOException {
+                    output.writeInt(BYTE_ARRAY);
+                    output.writeByteArray(element.asByteArray());
+                }
+
+                @Override
+                public Tag read(IInputStream input) throws IOException {
+                    AssertUtils.shouldBeTrue(input.readInt() == BYTE_ARRAY);
+                    return new TagByteArray(input.readByteArray());
+                }
             }
     );
 
@@ -246,6 +261,8 @@ public interface Tag {
 
     Map<String, Tag> asMap();
 
+    byte[] asByteArray();
+
     boolean isChar();
 
     boolean isInt();
@@ -263,6 +280,8 @@ public interface Tag {
     boolean isArray();
 
     boolean isMap();
+
+    boolean isByteArray();
 
     default String prettyprint() {
         return prettyprint("");

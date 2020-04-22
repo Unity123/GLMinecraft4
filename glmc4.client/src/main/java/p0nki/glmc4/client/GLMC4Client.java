@@ -4,29 +4,34 @@ import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
 import p0nki.glmc4.client.assets.AtlasPosition;
-import p0nki.glmc4.client.assets.ResourceLocation;
 import p0nki.glmc4.client.assets.TextureAssembler;
+import p0nki.glmc4.client.gl.Window;
 import p0nki.glmc4.client.gl.*;
+import p0nki.glmc4.utils.Utils;
 
+import java.awt.*;
 import java.io.IOException;
-import java.net.URISyntaxException;
+import java.util.stream.DoubleStream;
+import java.util.stream.Stream;
 
 public class GLMC4Client {
 
-    public static void main(String[] args) throws IOException, URISyntaxException {
+    private static double[] genUVs(AtlasPosition xmi, AtlasPosition xpl, AtlasPosition ymi, AtlasPosition ypl, AtlasPosition zmi, AtlasPosition zpl) {
+        return Stream.of(xmi, xpl, ymi, ypl, zmi, zpl).flatMapToDouble(pos -> DoubleStream.of(pos.x0, pos.y0, pos.x1, pos.y0, pos.x0, pos.y1, pos.x1, pos.y1)).toArray();
+    }
+
+    public static void main(String[] args) throws IOException {
 //        ClientInstance instance = new ClientInstance(new ClientConfig("localhost", 3333));
         Window.initialize();
         Window.setTitle("OPENGL TEST");
-        Shader3D shader = new Shader3D("test");
+        Shader3D shader = new Shader3D("chunk");
         Mesh mesh = new Mesh();
-        Texture texture = new Texture(new ResourceLocation("block/preview_20379.png"));
-        TextureAssembler.assembleTextures("block");
-        AtlasPosition xmi = TextureAssembler.get("block", "faces:xmi");
-        AtlasPosition xpl = TextureAssembler.get("block", "faces:xpl");
-        AtlasPosition ymi = TextureAssembler.get("block", "faces:ymi");
-        AtlasPosition ypl = TextureAssembler.get("block", "faces:ypl");
-        AtlasPosition zmi = TextureAssembler.get("block", "faces:zmi");
-        AtlasPosition zpl = TextureAssembler.get("block", "faces:zpl");
+        TextureAssembler blocks = TextureAssembler.assembleTextures("block");
+        AtlasPosition grassSide = blocks.get("grass:side");
+        AtlasPosition grassTop = blocks.get("grass:top");
+        AtlasPosition grassOverlay = blocks.get("grass:side_overlay");
+        AtlasPosition dirt = blocks.get("dirt");
+        AtlasPosition none = blocks.get("none");
         mesh.addBuffer(0, new double[]{
                 0, 1, 0,
                 0, 1, 1,
@@ -58,37 +63,12 @@ public class GLMC4Client {
                 0, 0, 1,
                 1, 0, 1,
         }, 3);
-        mesh.addBuffer(1, new double[]{
-                xmi.x0, xmi.y0,
-                xmi.x1, xmi.y0,
-                xmi.x0, xmi.y1,
-                xmi.x1, xmi.y1,
-
-                xpl.x0, xpl.y0,
-                xpl.x1, xpl.y0,
-                xpl.x0, xpl.y1,
-                xpl.x1, xpl.y1,
-
-                ymi.x0, ymi.y0,
-                ymi.x1, ymi.y0,
-                ymi.x0, ymi.y1,
-                ymi.x1, ymi.y1,
-
-                ypl.x0, ypl.y0,
-                ypl.x1, ypl.y0,
-                ypl.x0, ypl.y1,
-                ypl.x1, ypl.y1,
-
-                zmi.x0, zmi.y0,
-                zmi.x1, zmi.y0,
-                zmi.x0, zmi.y1,
-                zmi.x1, zmi.y1,
-
-                zpl.x0, zpl.y0,
-                zpl.x1, zpl.y0,
-                zpl.x0, zpl.y1,
-                zpl.x1, zpl.y1,
-        }, 2);
+        Color grassColor = new Color(137, 206, 88);//gross green
+//        Color grassColor = new Color(106, 112, 57);//swamp
+        mesh.addBuffer(1, genUVs(grassSide, grassSide, dirt, grassTop, grassSide, grassSide), 2);
+        mesh.addBuffer(2, Utils.flatten(Utils.repeatElements(4, Stream.of(Color.WHITE, Color.WHITE, Color.WHITE, grassColor, Color.WHITE, Color.WHITE))), 3);
+        mesh.addBuffer(3, genUVs(grassOverlay, grassOverlay, none, none, grassOverlay, grassOverlay), 2);
+        mesh.addBuffer(4, Utils.flatten(Utils.repeatElements(4, Stream.of(grassColor, grassColor, Color.WHITE, Color.WHITE, grassColor, grassColor))), 3);
         mesh.setIndices(new int[]{
                 0, 1, 2,
                 1, 2, 3,
@@ -117,7 +97,7 @@ public class GLMC4Client {
             GLUtils.clear();
             RenderContext ctx = new RenderContext(perspective, view);
             shader.bind(ctx);
-            shader.setTexture("tex", TextureAssembler.get("block"), 0);
+            shader.setTexture("tex", blocks.getTexture(), 0);
             mesh.render(RenderMode.TRIANGLES);
             Window.endFrame();
         }

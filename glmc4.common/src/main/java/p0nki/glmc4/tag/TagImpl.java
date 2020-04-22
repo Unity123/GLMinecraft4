@@ -55,6 +55,11 @@ public abstract class TagImpl implements Tag {
     }
 
     @Override
+    public byte[] asByteArray() {
+        throw new UnsupportedOperationException("Unimplemented method / invalid operation");
+    }
+
+    @Override
     public boolean isChar() {
         return false;
     }
@@ -96,6 +101,11 @@ public abstract class TagImpl implements Tag {
 
     @Override
     public boolean isMap() {
+        return false;
+    }
+
+    @Override
+    public boolean isByteArray() {
         return false;
     }
 

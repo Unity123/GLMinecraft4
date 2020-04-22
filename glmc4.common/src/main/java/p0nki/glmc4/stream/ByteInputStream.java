@@ -30,6 +30,11 @@ public class ByteInputStream implements IInputStream {
     }
 
     @Override
+    public byte[] readByteArray() throws IOException {
+        return stream.readNBytes(readInt());
+    }
+
+    @Override
     public void close() throws IOException {
         stream.close();
     }

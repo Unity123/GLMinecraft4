@@ -4,6 +4,8 @@ import java.io.IOException;
 
 public interface IOutputStream {
 
+    void writeByteArray(byte[]value)throws IOException;
+
     void writeChar(char value) throws IOException;
 
     void writeInt(int value) throws IOException;

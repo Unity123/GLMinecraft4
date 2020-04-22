@@ -28,6 +28,12 @@ public class ByteOutputStream implements IOutputStream {
     }
 
     @Override
+    public void writeByteArray(byte[] value) throws IOException {
+        writeInt(value.length);
+        output.write(value);
+    }
+
+    @Override
     public void writeChar(char c) throws IOException {
         output.write(ByteBuffer.allocate(Character.BYTES).putChar(c).array());
     }
