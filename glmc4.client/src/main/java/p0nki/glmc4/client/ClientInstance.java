@@ -106,7 +106,7 @@ public class ClientInstance {
         Window.initialize();
         Window.setOpacity(0.5F);
         Window.setSize(500, 500);
-        Window.setTitle("Your Player ID: " + yourPlayerMetadata.getUuid());
+        Window.setTitle("Your Player ID: " + yourPlayerMetadata.getUuid()+" - ignore this window pls kthx");
         while (!Window.shouldClose()) {
             GLUtils.clear();
             Window.endFrame();
