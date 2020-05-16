@@ -10,7 +10,7 @@ public class PacketAdapterS2C implements PacketListener {
 
     }
 
-    public void onReceiveS2CInfoResponse(PacketS2CInfoResponse packet) {
+    public void onReceiveS2CPlayerList(PacketS2CPlayerList packet) {
 
     }
 
@@ -23,8 +23,8 @@ public class PacketAdapterS2C implements PacketListener {
             case S2C_DISCONNECT:
                 onReceiveS2CDisconnect((PacketS2CDisconnect) packet);
                 break;
-            case S2C_INFO_RESPONSE:
-                onReceiveS2CInfoResponse((PacketS2CInfoResponse) packet);
+            case S2C_PLAYER_LIST:
+                onReceiveS2CPlayerList((PacketS2CPlayerList) packet);
                 break;
             default:
                 throw new UnsupportedOperationException(packet.getID().toString());

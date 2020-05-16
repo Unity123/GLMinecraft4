@@ -4,21 +4,22 @@ import p0nki.glmc4.data.ChatMessage;
 import p0nki.glmc4.data.PlayerMetadata;
 import p0nki.glmc4.packet.Packet;
 import p0nki.glmc4.packet.PacketS2CChatMessage;
-import p0nki.glmc4.packet.PacketS2CInfoResponse;
+import p0nki.glmc4.packet.PacketS2CPlayerList;
 
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.*;
+import java.util.logging.LogManager;
 import java.util.stream.Collectors;
 
 public class ServerInstance {
 
     public static ServerInstance INSTANCE;
 
-    public void queueInfoResponse() {
-        synchronized (sendInfoLock) {
-            sendInfoRequired = true;
+    public void queueResendPlayerList() {
+        synchronized (resendPlayerListLock) {
+            resendPlayerList = true;
         }
     }
 
@@ -42,8 +43,8 @@ public class ServerInstance {
 
     private final ServerConfig config;
 
-    private final Object sendInfoLock = new Object();
-    private boolean sendInfoRequired = false;
+    private final Object resendPlayerListLock = new Object();
+    private boolean resendPlayerList = false;
     private final List<Packet> queuedGlobalPackets = new ArrayList<>();
     private List<PlayerMetadata> players = new ArrayList<>();
     private Map<String, Connection> connections = new HashMap<>();
@@ -67,7 +68,7 @@ public class ServerInstance {
     }
 
     private PlayerMetadata createNewMetadata() {
-        return new PlayerMetadata("PLAYERNAME", "" + (int) (1000 * Math.random()));
+        return new PlayerMetadata("PLAYERNAME", "" + (int) (10000 * Math.random()));
     }
 
     private void startAcceptorThread() {
@@ -79,7 +80,8 @@ public class ServerInstance {
                         PlayerMetadata metadata = createNewMetadata();
                         players.add(metadata);
                         connections.put(metadata.getUuid(), new Connection(socket, metadata));
-                        queueInfoResponse();
+                        queueGlobalPacket(new PacketS2CChatMessage(new ChatMessage("SYSTEM", metadata.getUuid() + " CONNECTED")));
+                        queueResendPlayerList();
                     }
                 } catch (IOException ignored) {
 
@@ -93,15 +95,14 @@ public class ServerInstance {
     private void iterateGameLoop() {
         synchronized (addPlayersLock) {
             List<String> removeUUIDs = new ArrayList<>();
-            for (int i = 0; i < players.size(); i++) {
-                PlayerMetadata metadata = players.get(i);
+            for (PlayerMetadata metadata : players) {
                 connections.get(metadata.getUuid()).flushOutput();
                 if (connections.get(metadata.getUuid()).isConnectionDead()) removeUUIDs.add(metadata.getUuid());
             }
             int startSize = players.size();
             players = players.stream().filter(playerMetadata -> !removeUUIDs.contains(playerMetadata.getUuid())).collect(Collectors.toList());
             int endSize = players.size();
-            if (endSize != startSize) queueInfoResponse();
+            if (endSize != startSize) queueResendPlayerList();
             connections = connections.entrySet().stream().filter(entry -> {
                 boolean b = !removeUUIDs.contains(entry.getKey());
                 if (!b) {
@@ -122,11 +123,11 @@ public class ServerInstance {
                 }
                 queuedGlobalPackets.clear();
             }
-            synchronized (sendInfoLock) {
-                if (sendInfoRequired) {
-                    sendInfoRequired = false;
+            synchronized (resendPlayerListLock) {
+                if (resendPlayerList) {
+                    resendPlayerList = false;
                     for (Connection connection : connections.values()) {
-                        connection.queuePacket(new PacketS2CInfoResponse(players, connection.getPlayerMetadata()));
+                        connection.queuePacket(new PacketS2CPlayerList(players, connection.getPlayerMetadata()));
                     }
                 }
             }

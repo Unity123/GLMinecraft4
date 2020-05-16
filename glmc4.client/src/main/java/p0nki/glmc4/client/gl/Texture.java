@@ -8,6 +8,7 @@ import java.nio.ByteBuffer;
 
 import static org.lwjgl.opengl.GL41.*;
 import static org.lwjgl.stb.STBImage.stbi_load;
+import static org.lwjgl.stb.STBImage.stbi_set_flip_vertically_on_load;
 //import static org.lwjgl.stb.STBImage.stbi_set_flip_vertically_on_load;
 
 public class Texture {
@@ -17,10 +18,11 @@ public class Texture {
 
     public Texture(Location location) throws FileNotFoundException {
         id = glGenTextures();
+//        java.util.zip.GZIPOutputStream
         glBindTexture(GL_TEXTURE_2D, id);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-//        stbi_set_flip_vertically_on_load(false);
+        stbi_set_flip_vertically_on_load(false);
         int[] w = new int[1];
         int[] h = new int[1];
         int[] comps = new int[1];

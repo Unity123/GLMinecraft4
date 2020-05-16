@@ -1,5 +1,7 @@
 package p0nki.glmc4.tag;
 
+import java.util.List;
+
 public class TagArray extends TagImpl {
 
     private final Tag[] value;
@@ -10,6 +12,10 @@ public class TagArray extends TagImpl {
 
     public TagArray(Tag... value) {
         this.value = value;
+    }
+
+    public TagArray(List<Tag> value) {
+        this.value = value.toArray(Tag[]::new);
     }
 
     @Override

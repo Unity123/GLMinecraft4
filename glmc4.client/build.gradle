@@ -21,7 +21,7 @@ project.ext.lwjglNatives = "natives-macos"
 project.ext.jomlVersion = "1.9.24"
 
 dependencies {
-    compile group: 'javax.annotation', name: 'javax.annotation-api', version: '1.2-b01'
+    implementation("com.google.guava:guava:29.0-jre")
     compile project(':glmc4.common')
     compile "org.joml:joml:${jomlVersion}"
 
@@ -39,8 +39,4 @@ dependencies {
     runtimeOnly "org.lwjgl:lwjgl-openal::$lwjglNatives"
     runtimeOnly "org.lwjgl:lwjgl-opengl::$lwjglNatives"
     runtimeOnly "org.lwjgl:lwjgl-stb::$lwjglNatives"
-}
-
-run {
-    standardInput = System.in
 }

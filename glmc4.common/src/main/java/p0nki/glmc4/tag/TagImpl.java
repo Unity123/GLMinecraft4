@@ -1,5 +1,7 @@
 package p0nki.glmc4.tag;
 
+import p0nki.glmc4.utils.Identifier;
+
 import java.util.Map;
 
 public abstract class TagImpl implements Tag {
@@ -60,6 +62,11 @@ public abstract class TagImpl implements Tag {
     }
 
     @Override
+    public Identifier asIdentifier() {
+        throw new UnsupportedOperationException("Unimplemented method / invalid operation");
+    }
+
+    @Override
     public boolean isChar() {
         return false;
     }
@@ -106,6 +113,11 @@ public abstract class TagImpl implements Tag {
 
     @Override
     public boolean isByteArray() {
+        return false;
+    }
+
+    @Override
+    public boolean isIdentifier() {
         return false;
     }
 

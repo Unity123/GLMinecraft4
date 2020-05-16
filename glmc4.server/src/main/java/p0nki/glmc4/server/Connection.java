@@ -2,7 +2,12 @@ package p0nki.glmc4.server;
 
 import p0nki.glmc4.data.ChatMessage;
 import p0nki.glmc4.data.PlayerMetadata;
-import p0nki.glmc4.packet.*;
+import p0nki.glmc4.packet.Packet;
+import p0nki.glmc4.packet.PacketListener;
+import p0nki.glmc4.packet.PacketS2CChatMessage;
+import p0nki.glmc4.packet.PacketS2CDisconnect;
+import p0nki.glmc4.server.listeners.ChatListener;
+import p0nki.glmc4.server.listeners.PingListener;
 import p0nki.glmc4.stream.ByteInputStream;
 import p0nki.glmc4.stream.ByteOutputStream;
 import p0nki.glmc4.stream.IInputStream;
@@ -22,7 +27,7 @@ public class Connection {
     private final IOutputStream outputStream;
     private final PlayerMetadata playerMetadata;
     private final List<Packet> outgoingPackets = new ArrayList<>();
-    private long lastPing;
+    public long lastPing;
     private boolean isConnectionDead = false;
     private final List<PacketListener> packetListeners = new ArrayList<>();
 
@@ -46,19 +51,8 @@ public class Connection {
         outputStream = new ByteOutputStream(socket.getOutputStream());
         this.playerMetadata = playerMetadata;
         lastPing = System.currentTimeMillis();
-        ServerInstance.INSTANCE.queueGlobalPacket(new PacketS2CChatMessage(new ChatMessage("SYSTEM", playerMetadata.getUuid() + " CONNECTED")));
-        ServerInstance.INSTANCE.queueInfoResponse();
-        packetListeners.add(new PacketAdapterC2S() {
-            @Override
-            public void onReceivePacketC2SChatMessage(PacketC2SChatMessage packet) {
-                ServerInstance.INSTANCE.queueGlobalPacket(new PacketS2CChatMessage(new ChatMessage(playerMetadata.getUuid(), packet.getMessage())));
-            }
-
-            @Override
-            public void onReceivePacketC2SPing(PacketC2SPing packet) {
-                lastPing = System.currentTimeMillis();
-            }
-        });
+        packetListeners.add(new PingListener(this));
+        packetListeners.add(new ChatListener(this));
         startThread();
     }
 

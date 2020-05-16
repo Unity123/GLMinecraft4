@@ -51,10 +51,10 @@ public class ClientInstance {
             }
 
             @Override
-            public void onReceiveS2CInfoResponse(PacketS2CInfoResponse packet) {
+            public void onReceiveS2CPlayerList(PacketS2CPlayerList packet) {
                 players = packet.getPlayers();
                 if (yourPlayerMetadata != null && (!yourPlayerMetadata.getUuid().equals(packet.getYourPlayerMetadata().getUuid()) || !yourPlayerMetadata.getName().equals(packet.getYourPlayerMetadata().getName()))) {
-                    throw new RuntimeException("INVALID INFO PACKET");
+                    throw new RuntimeException("INVALID PLAYER LIST PACKET");
                 }
                 PlayerMetadata original = yourPlayerMetadata;
                 yourPlayerMetadata = packet.getYourPlayerMetadata();

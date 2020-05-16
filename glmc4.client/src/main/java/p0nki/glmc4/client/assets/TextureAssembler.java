@@ -1,7 +1,7 @@
 package p0nki.glmc4.client.assets;
 
 import p0nki.glmc4.client.gl.Texture;
-import p0nki.glmc4.utils.Utils;
+import p0nki.glmc4.utils.Identifier;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -13,16 +13,20 @@ import java.util.*;
 
 public class TextureAssembler {
 
-    private static Map<String, File> listFiles(String identifier, String directory) {
+    private static Map<Identifier, File> listFiles(Identifier identifier, String directory) {
         File file = new File(directory);
         String[] sub = file.list();
         if (sub == null) return new HashMap<>();
-        Map<String, File> map = new HashMap<>();
+        Map<Identifier, File> map = new HashMap<>();
         for (String s : sub) {
             File f = new File(directory + "/" + s);
-            if (f.isFile()) map.put(identifier + ":" + s, f);
+            String identifierString = s;
+            if (identifierString.indexOf(".") > 0)
+                identifierString = identifierString.substring(0, identifierString.indexOf("."));
+            Identifier nextIdentifier = new Identifier(identifier.getNamespace(), identifier.getPath() + "_" + identifierString);
+            if (f.isFile()) map.put(nextIdentifier, f);
             else {
-                map.putAll(listFiles(identifier + ":" + s, directory + "/" + s));
+                map.putAll(listFiles(nextIdentifier, directory + "/" + s));
             }
         }
         return map;
@@ -41,10 +45,10 @@ public class TextureAssembler {
         }
     }
 
-    private final Map<String, File> identifiers;
-    private final Map<String, Image> images;
+    private final Map<Identifier, File> identifiers;
+    private final Map<Identifier, Image> images;
 
-    private Image read(String identifier) throws IOException {
+    private Image read(Identifier identifier) throws IOException {
         BufferedImage img = ImageIO.read(identifiers.get(identifier));
         Image image = new Image();
         image.width = img.getWidth();
@@ -63,7 +67,7 @@ public class TextureAssembler {
     private final int height = 1024;
     private int pixelCount = 0;
 
-    private boolean canPlace(int[][] data, String identifier, int x, int y) {
+    private boolean canPlace(int[][] data, Identifier identifier, int x, int y) {
         int w = images.get(identifier).width;
         int h = images.get(identifier).height;
         for (int i = x; i < x + w; i++) {
@@ -75,19 +79,21 @@ public class TextureAssembler {
         return true;
     }
 
-    private void place(int[][] data, String identifier, int x, int y) {
+    private void place(int[][] data, Identifier identifier, int x, int y) {
         int w = images.get(identifier).width;
         int h = images.get(identifier).height;
         int[][] pixels = images.get(identifier).data;
         for (int i = x; i < x + w; i++) {
-            System.arraycopy(pixels[i - x], 0, data[i], y, h);
+            for (int j = y; j < y + h; j++) {
+                data[i][j] = pixels[i - x][y + h - j - 1];
+            }
         }
         pixelCount += w * h;
         images.get(identifier).x = x;
         images.get(identifier).y = y;
     }
 
-    private void place(int[][] data, String identifier) {
+    private void place(int[][] data, Identifier identifier) {
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
                 if (canPlace(data, identifier, x, y)) {
@@ -101,11 +107,11 @@ public class TextureAssembler {
 
     private final String directory;
 
-    private TextureAssembler(String directory) throws IOException {
+    private TextureAssembler(Identifier identifier, String directory) throws IOException {
         this.directory = directory;
-        identifiers = listFiles(directory, Objects.requireNonNull(ClassLoader.getSystemClassLoader().getResource(directory)).getFile());
+        identifiers = listFiles(identifier, Objects.requireNonNull(ClassLoader.getSystemClassLoader().getResource(directory)).getFile());
         images = new HashMap<>();
-        for (String s : identifiers.keySet()) {
+        for (Identifier s : identifiers.keySet()) {
             images.put(s, read(s));
         }
         int[][] data = new int[width][height];
@@ -114,13 +120,13 @@ public class TextureAssembler {
                 data[x][y] = -1;
             }
         }
-        List<String> keys = new ArrayList<>(identifiers.keySet());
+        List<Identifier> keys = new ArrayList<>(identifiers.keySet());
         keys.sort((o1, o2) -> {
             int i = Integer.compare(images.get(o1).area(), images.get(o2).area());
-            if (i == 0) return o1.compareTo(o2);
+            if (i == 0) return o1.toString().compareTo(o2.toString());
             else return -i;
         });
-        for (String key : keys) {
+        for (Identifier key : keys) {
             place(data, key);
         }
         BufferedImage img = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
@@ -132,14 +138,14 @@ public class TextureAssembler {
         ImageIO.write(img, "png", new LocalLocation("atlas/" + directory + ".png").getFile());
         PrintWriter writer = new PrintWriter(new LocalLocation("atlas/" + directory + ".txt").getFile());
         writer.println("-----------------\nIMAGES WRITTEN: " + keys.size() + "\nPIXELS AVAILABLE: " + width * height + "\nPIXELS USED: " + pixelCount + "\n-----------------");
-        for (String key : keys) {
+        for (Identifier key : keys) {
             writer.printf("%-64s %-9s %s\n", key, images.get(key).width + "x" + images.get(key).height, images.get(key).path);
         }
         writer.close();
     }
 
     //    private static final Map<String, Texture> loadedTextures = new HashMap<>();
-    private static final Map<String, TextureAssembler> assemblers = new HashMap<>();
+    private static final Map<Identifier, TextureAssembler> assemblers = new HashMap<>();
     private Texture texture = null;
 
     public Texture getTexture() throws FileNotFoundException {
@@ -147,23 +153,23 @@ public class TextureAssembler {
         return texture;
     }
 
-    public static TextureAssembler getAssembler(String directory) {
-        return assemblers.get(directory);
+    public static TextureAssembler getAssembler(Identifier identifier) {
+        return assemblers.get(identifier);
     }
 
-    private AtlasPosition attemptGet(String identifier) {
-        Image image = images.get(directory + ":" + identifier);
+    public AtlasPosition get(Identifier identifier) {
+        Image image = images.get(identifier);
         if (image == null) return null;
         return new AtlasPosition(image.x, image.y, image.width, image.height, width, height);
     }
 
-    public AtlasPosition get(String identifier) {
-        return Utils.firstNonNull(attemptGet(identifier), attemptGet(identifier + ".png"));
-    }
+//    public AtlasPosition get(Identifier identifier) {
+//        return Utils.firstNonNull(attemptGet(identifier), attemptGet(identifier.appendPath(".png")));
+//    }
 
-    public static TextureAssembler assembleTextures(String directory) throws IOException {
-        TextureAssembler assembler = new TextureAssembler(directory);
-        assemblers.put(directory, assembler);
+    public static TextureAssembler assembleTextures(Identifier identifier, String directory) throws IOException {
+        TextureAssembler assembler = new TextureAssembler(identifier, directory);
+        assemblers.put(identifier, assembler);
         return assembler;
     }
 

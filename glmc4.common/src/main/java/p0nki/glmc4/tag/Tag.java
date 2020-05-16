@@ -1,11 +1,12 @@
 package p0nki.glmc4.tag;
 
+import com.google.common.collect.ImmutableMap;
 import p0nki.glmc4.stream.IInputStream;
 import p0nki.glmc4.stream.IOutputStream;
 import p0nki.glmc4.utils.AssertUtils;
+import p0nki.glmc4.utils.Identifier;
 
 import java.io.IOException;
-import java.nio.ByteBuffer;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -58,6 +59,10 @@ public interface Tag {
         return new TagString(value);
     }
 
+    static TagIdentifier of(Identifier value) {
+        return new TagIdentifier(value);
+    }
+
     String PRETTYPRINT_TAB = "   ";
     int CHAR = 1;
     int INT = 2;
@@ -69,8 +74,9 @@ public interface Tag {
     int ARRAY = 8;
     int MAP = 9;
     int BYTE_ARRAY = 10;
-    Map<Integer, TagSerializer> SERIALIZERS = Map.of(
-            CHAR, new TagSerializer() {
+    int IDENTIFIER = 11;
+    Map<Integer, TagSerializer> SERIALIZERS = ImmutableMap.<Integer, TagSerializer>builder()
+            .put(CHAR, new TagSerializer() {
                 @Override
                 public void write(IOutputStream output, Tag element) throws IOException {
                     output.writeInt(CHAR);
@@ -82,8 +88,8 @@ public interface Tag {
                     AssertUtils.shouldBeTrue(input.readInt() == CHAR);
                     return new TagChar(input.readChar());
                 }
-            },
-            INT, new TagSerializer() {
+            })
+            .put(INT, new TagSerializer() {
                 @Override
                 public void write(IOutputStream output, Tag element) throws IOException {
                     output.writeInt(INT);
@@ -95,8 +101,8 @@ public interface Tag {
                     AssertUtils.shouldBeTrue(input.readInt() == INT);
                     return new TagInt(input.readInt());
                 }
-            },
-            LONG, new TagSerializer() {
+            })
+            .put(LONG, new TagSerializer() {
                 @Override
                 public void write(IOutputStream output, Tag element) throws IOException {
                     output.writeInt(LONG);
@@ -108,8 +114,8 @@ public interface Tag {
                     AssertUtils.shouldBeTrue(input.readInt() == LONG);
                     return new TagLong(input.readLong());
                 }
-            },
-            FLOAT, new TagSerializer() {
+            })
+            .put(FLOAT, new TagSerializer() {
                 @Override
                 public void write(IOutputStream output, Tag element) throws IOException {
                     output.writeInt(FLOAT);
@@ -121,8 +127,8 @@ public interface Tag {
                     AssertUtils.shouldBeTrue(input.readInt() == FLOAT);
                     return new TagFloat(input.readFloat());
                 }
-            },
-            DOUBLE, new TagSerializer() {
+            })
+            .put(DOUBLE, new TagSerializer() {
                 @Override
                 public void write(IOutputStream output, Tag element) throws IOException {
                     output.writeInt(DOUBLE);
@@ -134,8 +140,8 @@ public interface Tag {
                     AssertUtils.shouldBeTrue(input.readInt() == DOUBLE);
                     return new TagDouble(input.readDouble());
                 }
-            },
-            STRING, new TagSerializer() {
+            })
+            .put(STRING, new TagSerializer() {
                 @Override
                 public void write(IOutputStream output, Tag element) throws IOException {
                     output.writeInt(STRING);
@@ -155,8 +161,8 @@ public interface Tag {
                     }
                     return new TagString(builder.toString());
                 }
-            },
-            BOOLEAN, new TagSerializer() {
+            })
+            .put(BOOLEAN, new TagSerializer() {
                 @Override
                 public void write(IOutputStream output, Tag element) throws IOException {
                     output.writeInt(BOOLEAN);
@@ -168,8 +174,8 @@ public interface Tag {
                     AssertUtils.shouldBeTrue(input.readInt() == BOOLEAN);
                     return new TagBoolean(input.readInt() == 1);
                 }
-            },
-            ARRAY, new TagSerializer() {
+            })
+            .put(ARRAY, new TagSerializer() {
                 @Override
                 public void write(IOutputStream output, Tag element) throws IOException {
                     output.writeInt(ARRAY);
@@ -191,8 +197,8 @@ public interface Tag {
                     }
                     return new TagArray(value);
                 }
-            },
-            MAP, new TagSerializer() {
+            })
+            .put(MAP, new TagSerializer() {
                 @Override
                 public void write(IOutputStream output, Tag element) throws IOException {
                     output.writeInt(MAP);
@@ -216,8 +222,8 @@ public interface Tag {
                     }
                     return new TagMap(value);
                 }
-            },
-            BYTE_ARRAY, new TagSerializer() {
+            })
+            .put(BYTE_ARRAY, new TagSerializer() {
                 @Override
                 public void write(IOutputStream output, Tag element) throws IOException {
                     output.writeInt(BYTE_ARRAY);
@@ -229,8 +235,21 @@ public interface Tag {
                     AssertUtils.shouldBeTrue(input.readInt() == BYTE_ARRAY);
                     return new TagByteArray(input.readByteArray());
                 }
-            }
-    );
+            })
+            .put(IDENTIFIER, new TagSerializer() {
+
+                @Override
+                public void write(IOutputStream output, Tag element) throws IOException {
+                    output.writeInt(IDENTIFIER);
+                    SERIALIZERS.get(STRING).write(output, new TagString(element.asIdentifier().toString()));
+                }
+
+                @Override
+                public Tag read(IInputStream input) throws IOException {
+                    AssertUtils.shouldBeTrue(input.readInt() == IDENTIFIER);
+                    return new TagIdentifier(new Identifier(SERIALIZERS.get(STRING).read(input).asString()));
+                }
+            }).build();
 
     static void write(IOutputStream output, Tag element) throws IOException {
         output.writeInt(element.getID());
@@ -263,6 +282,8 @@ public interface Tag {
 
     byte[] asByteArray();
 
+    Identifier asIdentifier();
+
     boolean isChar();
 
     boolean isInt();
@@ -282,6 +303,8 @@ public interface Tag {
     boolean isMap();
 
     boolean isByteArray();
+
+    boolean isIdentifier();
 
     default String prettyprint() {
         return prettyprint("");
