@@ -14,4 +14,6 @@ public abstract class Block extends Registrable<Block> implements Identifiable {
         return new BlockState(getRawID(), 0);
     }
 
+    public abstract boolean isTransparent();
+
 }

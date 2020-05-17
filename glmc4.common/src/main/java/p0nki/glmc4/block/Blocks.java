@@ -6,12 +6,13 @@ public class Blocks {
 
     public static final Registry<Block> REGISTRY = new Registry<>();
 
+    public static final Block AIR = new BlockAir();
     public static final Block GRASS = new BlockGrass();
     public static final Block DIRT = new BlockDirt();
     public static final Block STONE = new BlockStone();
 
     static {
-        REGISTRY.registerPlural(GRASS, DIRT, STONE);
+        REGISTRY.registerPlural(AIR, GRASS, DIRT, STONE);
     }
 
 }

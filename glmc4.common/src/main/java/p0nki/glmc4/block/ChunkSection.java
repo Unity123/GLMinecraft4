@@ -26,7 +26,7 @@ public class ChunkSection implements BlockView, BlockWrite {
 
     @Override
     public boolean containsPosition(BlockPos<?> pos) {
-        return pos.containedBetween(BlockPos.ORIGIN, BOUNDS);
+        return pos.containedBetween(BlockPos.Immutable.ORIGIN, BOUNDS);
     }
 
     @Override

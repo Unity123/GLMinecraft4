@@ -3,8 +3,10 @@ package p0nki.glmc4.utils.math;
 import com.google.common.collect.ImmutableMap;
 import p0nki.glmc4.block.Direction;
 import p0nki.glmc4.tag.Tag;
+import p0nki.glmc4.utils.Component3D;
 import p0nki.glmc4.utils.TagSerializable;
 
+import javax.annotation.CheckReturnValue;
 import javax.annotation.Nonnull;
 
 /**
@@ -14,8 +16,6 @@ import javax.annotation.Nonnull;
  * @param <T> The BlockPos subtype that intermediate / chainable methods will return
  */
 public abstract class BlockPos<T extends BlockPos<T>> implements TagSerializable {
-
-    public final static Immutable ORIGIN = new Immutable(0, 0, 0);
 
     // TAG METHODS
     @Override
@@ -45,6 +45,54 @@ public abstract class BlockPos<T extends BlockPos<T>> implements TagSerializable
 
     public final boolean containedBetween(BlockPos<?> first, BlockPos<?> second) {
         return MCMath.isBetween(x(), first.x(), second.x()) && MCMath.isBetween(y(), first.y(), second.y()) && MCMath.isBetween(z(), first.z(), second.z());
+    }
+
+    public final T setX(int x) {
+        return set(x, y(), z());
+    }
+
+    public final T setY(int y) {
+        return set(x(), y, z());
+    }
+
+    public final T setZ(int z) {
+        return set(x(), y(), z);
+    }
+
+    public final T set(int value, Component3D component3D) {
+        switch (component3D) {
+            case X:
+                return setX(value);
+            case Y:
+                return setY(value);
+            case Z:
+                return setZ(value);
+        }
+        throw new IllegalArgumentException();
+    }
+
+    public final T offsetXMI(int amount) {
+        return set(x() - amount, y(), z());
+    }
+
+    public final T offsetXPL(int amount) {
+        return set(x() + amount, y(), z());
+    }
+
+    public final T offsetYMI(int amount) {
+        return set(x(), y() - amount, z());
+    }
+
+    public final T offsetYPL(int amount) {
+        return set(x(), y() + amount, z());
+    }
+
+    public final T offsetZMI(int amount) {
+        return set(x(), y(), z() - amount);
+    }
+
+    public final T offsetZPL(int amount) {
+        return set(x(), y(), z() + amount);
     }
 
     public final T offset(int amount, @Nonnull Direction direction) {
@@ -88,33 +136,20 @@ public abstract class BlockPos<T extends BlockPos<T>> implements TagSerializable
 
     // ABSTRACT METHODS
 
+    @CheckReturnValue
     public abstract int x();
 
+    @CheckReturnValue
     public abstract int y();
 
+    @CheckReturnValue
     public abstract int z();
-
-    public abstract T offsetXMI(int amount);
-
-    public abstract T offsetXPL(int amount);
-
-    public abstract T offsetYMI(int amount);
-
-    public abstract T offsetYPL(int amount);
-
-    public abstract T offsetZMI(int amount);
-
-    public abstract T offsetZPL(int amount);
-
-    public abstract T setX(int newX);
-
-    public abstract T setY(int newY);
-
-    public abstract T setZ(int newZ);
 
     public abstract T set(int newX, int newY, int newZ);
 
     public static class Immutable extends BlockPos<Immutable> {
+
+        public static final Immutable ORIGIN = new Immutable(0, 0, 0);
 
         private final int x;
         private final int y;
@@ -148,51 +183,6 @@ public abstract class BlockPos<T extends BlockPos<T>> implements TagSerializable
         @Override
         public int z() {
             return z;
-        }
-
-        @Override
-        public Immutable offsetXMI(int amount) {
-            return new Immutable(x - amount, y, z);
-        }
-
-        @Override
-        public Immutable offsetXPL(int amount) {
-            return new Immutable(x + amount, y, z);
-        }
-
-        @Override
-        public Immutable offsetYMI(int amount) {
-            return new Immutable(x, y - amount, z);
-        }
-
-        @Override
-        public Immutable offsetYPL(int amount) {
-            return new Immutable(x, y + amount, z);
-        }
-
-        @Override
-        public Immutable offsetZMI(int amount) {
-            return new Immutable(x, y, z - amount);
-        }
-
-        @Override
-        public Immutable offsetZPL(int amount) {
-            return new Immutable(x, y, z + amount);
-        }
-
-        @Override
-        public Immutable setX(int newX) {
-            return new Immutable(newX, y, z);
-        }
-
-        @Override
-        public Immutable setY(int newY) {
-            return new Immutable(x, newY, z);
-        }
-
-        @Override
-        public Immutable setZ(int newZ) {
-            return new Immutable(x, y, newZ);
         }
 
         @Override
@@ -235,60 +225,6 @@ public abstract class BlockPos<T extends BlockPos<T>> implements TagSerializable
         @Override
         public int z() {
             return z;
-        }
-
-        @Override
-        public Mutable offsetXMI(int amount) {
-            x -= amount;
-            return this;
-        }
-
-        @Override
-        public Mutable offsetXPL(int amount) {
-            x += amount;
-            return this;
-        }
-
-        @Override
-        public Mutable offsetYMI(int amount) {
-            y -= amount;
-            return this;
-        }
-
-        @Override
-        public Mutable offsetYPL(int amount) {
-            y += amount;
-            return this;
-        }
-
-        @Override
-        public Mutable offsetZMI(int amount) {
-            z -= amount;
-            return this;
-        }
-
-        @Override
-        public Mutable offsetZPL(int amount) {
-            z += amount;
-            return this;
-        }
-
-        @Override
-        public Mutable setX(int newX) {
-            x = newX;
-            return this;
-        }
-
-        @Override
-        public Mutable setY(int newY) {
-            y = newY;
-            return this;
-        }
-
-        @Override
-        public Mutable setZ(int newZ) {
-            z = newZ;
-            return this;
         }
 
         @Override

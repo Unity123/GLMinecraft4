@@ -10,6 +10,14 @@ public class PlayerMetadata implements TagSerializable {
     private final String name;
     private final String uuid;
 
+    @Override
+    public String toString() {
+        return "PlayerMetadata{" +
+                "name='" + name + '\'' +
+                ", uuid='" + uuid + '\'' +
+                '}';
+    }
+
     public PlayerMetadata(String name, String uuid) {
         this.name = name;
         this.uuid = uuid;

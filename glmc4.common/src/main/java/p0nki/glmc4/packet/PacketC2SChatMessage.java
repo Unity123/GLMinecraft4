@@ -4,7 +4,7 @@ import p0nki.glmc4.tag.Tag;
 
 import java.util.Map;
 
-public class PacketC2SChatMessage extends Packet {
+public class PacketC2SChatMessage extends Packet<PacketC2SChatMessage> {
 
     private final String message;
 
@@ -17,8 +17,8 @@ public class PacketC2SChatMessage extends Packet {
     }
 
     @Override
-    public PacketID getID() {
-        return PacketID.C2S_CHAT_MESSAGE;
+    public PacketType<PacketC2SChatMessage> getType() {
+        return Packets.C2S_CHAT_MESSAGE;
     }
 
     public String getMessage() {
@@ -28,7 +28,6 @@ public class PacketC2SChatMessage extends Packet {
     @Override
     public Tag toTag() {
         return Tag.of(Map.of(
-                "id", getID().toTag(),
                 "message", Tag.of(message)
         ));
     }

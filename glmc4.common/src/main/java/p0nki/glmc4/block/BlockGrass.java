@@ -10,4 +10,9 @@ public class BlockGrass extends Block {
     public Identifier getID() {
         return new Identifier("minecraft:grass_block");
     }
+
+    @Override
+    public boolean isTransparent() {
+        return false;
+    }
 }

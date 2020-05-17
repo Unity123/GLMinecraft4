@@ -27,12 +27,12 @@ public class Chunk implements BlockView, BlockWrite {
 
     @Override
     public boolean containsPosition(BlockPos<?> pos) {
-        return pos.containedBetween(BlockPos.ORIGIN, BOUNDS);
+        return pos.containedBetween(BlockPos.Immutable.ORIGIN, BOUNDS);
     }
 
     public static Chunk TEST_RENDER_CHUNK() {
         Chunk chunk = new Chunk();
-        BlockPos.Mutable bpos = BlockPos.ORIGIN.toMutable();
+        BlockPos.Mutable bpos = BlockPos.Immutable.ORIGIN.toMutable();
         for (int x = 0; x < 16; x++) {
             bpos.setX(x);
             for (int z = 0; z < 16; z++) {

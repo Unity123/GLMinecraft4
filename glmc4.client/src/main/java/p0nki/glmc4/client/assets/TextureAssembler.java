@@ -24,6 +24,8 @@ public class TextureAssembler {
             if (identifierString.indexOf(".") > 0)
                 identifierString = identifierString.substring(0, identifierString.indexOf("."));
             Identifier nextIdentifier = new Identifier(identifier.getNamespace(), identifier.getPath() + "_" + identifierString);
+            if (identifier.getPath().equals(""))
+                nextIdentifier = new Identifier(identifier.getNamespace(), identifierString);
             if (f.isFile()) map.put(nextIdentifier, f);
             else {
                 map.putAll(listFiles(nextIdentifier, directory + "/" + s));
@@ -109,7 +111,7 @@ public class TextureAssembler {
 
     private TextureAssembler(Identifier identifier, String directory) throws IOException {
         this.directory = directory;
-        identifiers = listFiles(identifier, Objects.requireNonNull(ClassLoader.getSystemClassLoader().getResource(directory)).getFile());
+        identifiers = listFiles(new Identifier(identifier.getNamespace(), ""), Objects.requireNonNull(ClassLoader.getSystemClassLoader().getResource(directory)).getFile());
         images = new HashMap<>();
         for (Identifier s : identifiers.keySet()) {
             images.put(s, read(s));
@@ -159,13 +161,9 @@ public class TextureAssembler {
 
     public AtlasPosition get(Identifier identifier) {
         Image image = images.get(identifier);
-        if (image == null) return null;
+        if (image == null) throw new IllegalArgumentException(identifier.toString());
         return new AtlasPosition(image.x, image.y, image.width, image.height, width, height);
     }
-
-//    public AtlasPosition get(Identifier identifier) {
-//        return Utils.firstNonNull(attemptGet(identifier), attemptGet(identifier.appendPath(".png")));
-//    }
 
     public static TextureAssembler assembleTextures(Identifier identifier, String directory) throws IOException {
         TextureAssembler assembler = new TextureAssembler(identifier, directory);

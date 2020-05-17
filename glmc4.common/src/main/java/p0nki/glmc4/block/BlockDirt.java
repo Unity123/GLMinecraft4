@@ -11,4 +11,9 @@ public class BlockDirt extends Block{
     public Identifier getID() {
         return new Identifier("minecraft:dirt_block");
     }
+
+    @Override
+    public boolean isTransparent() {
+        return false;
+    }
 }

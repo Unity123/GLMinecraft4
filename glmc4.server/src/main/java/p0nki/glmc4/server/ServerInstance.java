@@ -2,32 +2,23 @@ package p0nki.glmc4.server;
 
 import p0nki.glmc4.data.ChatMessage;
 import p0nki.glmc4.data.PlayerMetadata;
-import p0nki.glmc4.packet.Packet;
-import p0nki.glmc4.packet.PacketS2CChatMessage;
-import p0nki.glmc4.packet.PacketS2CPlayerList;
+import p0nki.glmc4.packet.*;
 
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.*;
-import java.util.logging.LogManager;
 import java.util.stream.Collectors;
 
 public class ServerInstance {
 
     public static ServerInstance INSTANCE;
 
-    public void queueResendPlayerList() {
-        synchronized (resendPlayerListLock) {
-            resendPlayerList = true;
-        }
-    }
-
     public ServerConfig getConfig() {
         return config;
     }
 
-    public void queueGlobalPacket(Packet packet) {
+    public void queueGlobalPacket(Packet<?> packet) {
         synchronized (queuedGlobalPackets) {
             queuedGlobalPackets.add(packet);
         }
@@ -43,9 +34,8 @@ public class ServerInstance {
 
     private final ServerConfig config;
 
-    private final Object resendPlayerListLock = new Object();
     private boolean resendPlayerList = false;
-    private final List<Packet> queuedGlobalPackets = new ArrayList<>();
+    private final List<Packet<?>> queuedGlobalPackets = new ArrayList<>();
     private List<PlayerMetadata> players = new ArrayList<>();
     private Map<String, Connection> connections = new HashMap<>();
     private final ServerSocket serverSocket;
@@ -80,8 +70,8 @@ public class ServerInstance {
                         PlayerMetadata metadata = createNewMetadata();
                         players.add(metadata);
                         connections.put(metadata.getUuid(), new Connection(socket, metadata));
-                        queueGlobalPacket(new PacketS2CChatMessage(new ChatMessage("SYSTEM", metadata.getUuid() + " CONNECTED")));
-                        queueResendPlayerList();
+                        connections.get(metadata.getUuid()).queuePacket(new PacketS2COnJoin(metadata, players));
+                        queueGlobalPacket(new PacketS2CPlayerConnect(metadata));
                     }
                 } catch (IOException ignored) {
 
@@ -99,38 +89,31 @@ public class ServerInstance {
                 connections.get(metadata.getUuid()).flushOutput();
                 if (connections.get(metadata.getUuid()).isConnectionDead()) removeUUIDs.add(metadata.getUuid());
             }
-            int startSize = players.size();
             players = players.stream().filter(playerMetadata -> !removeUUIDs.contains(playerMetadata.getUuid())).collect(Collectors.toList());
-            int endSize = players.size();
-            if (endSize != startSize) queueResendPlayerList();
             connections = connections.entrySet().stream().filter(entry -> {
                 boolean b = !removeUUIDs.contains(entry.getKey());
                 if (!b) {
                     try {
                         entry.getValue().close();
-                        queueGlobalPacket(new PacketS2CChatMessage(new ChatMessage("SYSTEM", entry.getKey() + " DISCONNECTED")));
+                        queueGlobalPacket(new PacketS2CPlayerDisconnect(entry.getValue().getPlayerMetadata()));
                     } catch (IOException ignored) {
 
                     }
                 }
                 return b;
             }).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
-            synchronized (queuedGlobalPackets) {
-                for (Packet packet : queuedGlobalPackets) {
-                    for (Connection connection : connections.values()) {
-                        connection.queuePacket(packet);
-                    }
-                }
-                queuedGlobalPackets.clear();
-            }
-            synchronized (resendPlayerListLock) {
-                if (resendPlayerList) {
-                    resendPlayerList = false;
-                    for (Connection connection : connections.values()) {
-                        connection.queuePacket(new PacketS2CPlayerList(players, connection.getPlayerMetadata()));
-                    }
+            flushGlobalPackets();
+        }
+    }
+
+    private void flushGlobalPackets() {
+        synchronized (queuedGlobalPackets) {
+            for (Packet<?> packet : queuedGlobalPackets) {
+                for (Connection connection : connections.values()) {
+                    connection.queuePacket(packet);
                 }
             }
+            queuedGlobalPackets.clear();
         }
     }
 
