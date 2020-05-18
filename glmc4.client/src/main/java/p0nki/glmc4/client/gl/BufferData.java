@@ -12,10 +12,17 @@ public class BufferData {
 
     private final int size;
     public List<Double> data;
+    private Vector3f offset3f;
 
     public BufferData(int size) {
         this.size = size;
         data = new ArrayList<>();
+        offset3f = new Vector3f(0, 0, 0);
+    }
+
+    public BufferData offset3f(Vector3f offset3f) {
+        this.offset3f = offset3f;
+        return this;
     }
 
     public int getSize() {
@@ -34,7 +41,7 @@ public class BufferData {
 
     public BufferData append3f(List<Vector3f> data) {
         if (size != 3) throw new IllegalStateException("" + size);
-        return append(data.stream().flatMapToDouble(v -> DoubleStream.of(v.x, v.y, v.z)).boxed().collect(Collectors.toList()));
+        return append(data.stream().flatMapToDouble(v -> DoubleStream.of(v.x + offset3f.x, v.y + offset3f.y, v.z + offset3f.z)).boxed().collect(Collectors.toList()));
     }
 
 

@@ -11,4 +11,8 @@ public class GLUtils {
         GL41.glEnable(GL41.GL_DEPTH_TEST);
     }
 
+    public static void hudRender(){
+        GL41.glDisable(GL41.GL_DEPTH_TEST);
+    }
+
 }

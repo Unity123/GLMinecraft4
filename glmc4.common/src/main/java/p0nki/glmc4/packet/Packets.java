@@ -14,6 +14,7 @@ public class Packets {
     public static final PacketType<PacketS2COnJoin> S2C_ON_JOIN = new PacketType<>("S2C_ON_JOIN", PacketS2COnJoin::new);
     public static final PacketType<PacketS2CPlayerConnect> S2C_PLAYER_CONNECT = new PacketType<>("S2C_PLAYER_CONNECT", PacketS2CPlayerConnect::new);
     public static final PacketType<PacketS2CPlayerDisconnect> S2C_PLAYER_DISCONNECT = new PacketType<>("S2C_PLAYER_DISCONNECT", PacketS2CPlayerDisconnect::new);
+    public static final PacketType<PacketS2CChunk> S2C_CHUNK = new PacketType<>("S2C_CHUNK", PacketS2CChunk::new);
 
     private static final Map<String, PacketType<?>> PACKET_TYPES = ImmutableMap.<String, PacketType<?>>builder()
             .put("C2S_CHAT_MESSAGE", C2S_CHAT_MESSAGE)
@@ -23,6 +24,7 @@ public class Packets {
             .put("S2C_ON_JOIN", S2C_ON_JOIN)
             .put("S2C_PLAYER_CONNECT", S2C_PLAYER_CONNECT)
             .put("S2C_PLAYER_DISCONNECT", S2C_PLAYER_DISCONNECT)
+            .put("S2C_CHUNK", S2C_CHUNK)
             .build();
 
     public static boolean has(String name) {

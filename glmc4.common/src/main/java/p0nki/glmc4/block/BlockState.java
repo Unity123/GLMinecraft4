@@ -24,4 +24,8 @@ public class BlockState {
         return value;
     }
 
+    public Block asBlock() {
+        return Blocks.REGISTRY.get(getID()).getValue();
+    }
+
 }

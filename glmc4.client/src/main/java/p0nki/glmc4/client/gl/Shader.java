@@ -1,6 +1,7 @@
 package p0nki.glmc4.client.gl;
 
 import org.joml.Matrix4f;
+import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.lwjgl.BufferUtils;
 import p0nki.glmc4.client.assets.ResourceLocation;
@@ -76,6 +77,10 @@ public class Shader {
 
     public void setVector3f(String name, Vector3f value) {
         glUniform3f(glGetUniformLocation(id, name), value.x, value.y, value.z);
+    }
+
+    public void setVector2f(String name, Vector2f value) {
+        glUniform2f(glGetUniformLocation(id, name), value.x, value.y);
     }
 
     public void setTexture(String name, Texture value, int unit) {

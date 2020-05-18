@@ -63,6 +63,10 @@ public interface Tag {
         return new TagIdentifier(value);
     }
 
+    static TagByteArray of(byte[] value) {
+        return new TagByteArray(value);
+    }
+
     String PRETTYPRINT_TAB = "   ";
     int CHAR = 1;
     int INT = 2;
