@@ -4,6 +4,18 @@ import p0nki.glmc4.block.Direction;
 
 public abstract class SixFaces<T, S extends SixFaces<T, S>> {
 
+    public SixFaces() {
+
+    }
+
+    public SixFaces(T value) {
+
+    }
+
+    public SixFaces(T xmi, T xpl, T ymi, T ypl, T zmi, T zpl) {
+
+    }
+
     public abstract T xmi();
 
     public abstract T xpl();
@@ -74,7 +86,11 @@ public abstract class SixFaces<T, S extends SixFaces<T, S>> {
         private final T zpl;
 
         public Immutable() {
-            this(null, null, null, null, null, null);
+            this(null);
+        }
+
+        public Immutable(T value) {
+            this(value, value, value, value, value, value);
         }
 
         public Immutable(T xmi, T xpl, T ymi, T ypl, T zmi, T zpl) {
@@ -155,6 +171,23 @@ public abstract class SixFaces<T, S extends SixFaces<T, S>> {
         private T ypl;
         private T zmi;
         private T zpl;
+
+        Mutable() {
+            this(null);
+        }
+
+        Mutable(T value) {
+            this(value, value, value, value, value, value);
+        }
+
+        Mutable(T xmi, T xpl, T ymi, T ypl, T zmi, T zpl) {
+            this.xmi = xmi;
+            this.xpl = xpl;
+            this.ymi = ymi;
+            this.ypl = ypl;
+            this.zmi = zmi;
+            this.zpl = zpl;
+        }
 
         @Override
         public T xmi() {

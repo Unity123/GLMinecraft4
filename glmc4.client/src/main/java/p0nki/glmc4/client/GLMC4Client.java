@@ -22,12 +22,11 @@ public class GLMC4Client {
         Window.initialize();
         Window.setTitle("OPENGL TEST");
         Shader3D shader = new Shader3D("chunk");
-        Shader3D shaderHarder = new Shader3D("chunkHarder");
         TextureAssembler blocks = TextureAssembler.assembleTextures(new Identifier("minecraft:block"), "block");
         System.getProperties().keySet().stream().sorted(Comparator.comparing(Object::toString)).forEach(key -> System.out.println(key + ": " + System.getProperties().get(key)));
         ClientWorld world = new ClientWorld();
-        for (int i = 0; i <= 2; i++) {
-            for (int j = 0; j <= 2; j++) {
+        for (int i = -2; i <= 2; i++) {
+            for (int j = -2; j <= 2; j++) {
                 world.onReceiveS2CLoadChunk(new PacketS2CLoadChunk(MCMath.pack(i, j), Chunk.TEST_RENDER_CHUNK(i, j)));
             }
         }
@@ -43,14 +42,10 @@ public class GLMC4Client {
 
             GLUtils.clear();
             RenderContext ctx = new RenderContext(perspective, view);
-            Shader3D curShader = shader;
-            if (Window.isKeyDown('H')) {
-                curShader = shaderHarder;
-            }
-            curShader.bind(ctx);
-            curShader.setTexture("tex", blocks.getTexture(), 0);
+            shader.bind(ctx);
+            shader.setTexture("tex", blocks.getTexture(), 0);
             for (Long coordinate : world.getCoordinates()) {
-                curShader.setMatrix4f("model", new Matrix4f().translate(16 * MCMath.unpackX(coordinate), 0, 16 * MCMath.unpackZ(coordinate)));
+                shader.setMatrix4f("model", new Matrix4f().translate(16 * MCMath.unpackX(coordinate), 0, 16 * MCMath.unpackZ(coordinate)));
                 world.getMesh(coordinate).render(RenderMode.TRIANGLES);
             }
             GLUtils.hudRender();
