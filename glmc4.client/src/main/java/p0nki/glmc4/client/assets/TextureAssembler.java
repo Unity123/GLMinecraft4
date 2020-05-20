@@ -65,8 +65,8 @@ public class TextureAssembler {
         return image;
     }
 
-    private final int width = 1024;
-    private final int height = 1024;
+    private final int width = 128;
+    private final int height = 64;
     private int pixelCount = 0;
 
     private boolean canPlace(int[][] data, Identifier identifier, int x, int y) {

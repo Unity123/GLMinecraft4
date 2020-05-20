@@ -21,7 +21,7 @@ public class ChunkMesher {
                     BlockState state = chunk.get(bpos);
                     if (state.asBlock() == Blocks.AIR) continue;
                     boolean xmi, xpl, ymi, ypl, zmi, zpl;
-                    xmi = xpl = ymi = ypl = zmi = zpl = false;
+                    xmi = xpl = ymi = ypl = zmi = zpl = true;
                     if (x > 0) xmi = chunk.get(bpos.offsetXMI(1)).asBlock().isTransparent();
                     if (x < 15) xpl = chunk.get(bpos.offsetXPL(1)).asBlock().isTransparent();
                     if (y > 0) ymi = chunk.get(bpos.offsetYMI(1)).asBlock().isTransparent();
