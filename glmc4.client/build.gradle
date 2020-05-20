@@ -1,3 +1,5 @@
+import org.gradle.internal.os.OperatingSystem
+
 plugins {
     id 'java'
 }
@@ -7,7 +9,9 @@ apply plugin: 'idea'
 apply plugin: 'application'
 
 mainClassName = 'p0nki.glmc4.client.GLMC4Client'
-//applicationDefaultJvmArgs = ["-XstartOnFirstThread"]
+if (OperatingSystem.current() == OperatingSystem.MAC_OS) {
+    applicationDefaultJvmArgs = ["-XstartOnFirstThread"]
+}
 
 repositories {
     mavenCentral()
@@ -17,7 +21,20 @@ repositories {
 }
 
 project.ext.lwjglVersion = "3.2.3"
-project.ext.lwjglNatives = "natives-macos"
+switch (OperatingSystem.current()) {
+    case OperatingSystem.LINUX:
+        def osArch = System.getProperty("os.arch")
+        project.ext.lwjglNatives = osArch.startsWith("arm") || osArch.startsWith("aarch64")
+                ? "natives-linux-${osArch.contains("64") || osArch.startsWith("armv8") ? "arm64" : "arm32"}"
+                : "natives-linux"
+        break
+    case OperatingSystem.MAC_OS:
+        project.ext.lwjglNatives = "natives-macos"
+        break
+    case OperatingSystem.WINDOWS:
+        project.ext.lwjglNatives = System.getProperty("os.arch").contains("64") ? "natives-windows" : "natives-windows-x86"
+        break
+}
 project.ext.jomlVersion = "1.9.24"
 
 dependencies {
