@@ -1,3 +1,6 @@
+set JAVA_HOME="C:\Program Files\Java\jdk-14.0.1"
+@rem HACKS
+
 @rem
 @rem Copyright 2015 the original author or authors.
 @rem

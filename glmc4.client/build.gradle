@@ -7,7 +7,7 @@ apply plugin: 'idea'
 apply plugin: 'application'
 
 mainClassName = 'p0nki.glmc4.client.GLMC4Client'
-applicationDefaultJvmArgs = ["-XstartOnFirstThread"]
+//applicationDefaultJvmArgs = ["-XstartOnFirstThread"]
 
 repositories {
     mavenCentral()
