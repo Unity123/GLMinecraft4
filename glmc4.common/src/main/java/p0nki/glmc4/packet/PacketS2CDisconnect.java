@@ -2,8 +2,6 @@ package p0nki.glmc4.packet;
 
 import p0nki.glmc4.tag.Tag;
 
-import java.util.Map;
-
 public class PacketS2CDisconnect extends Packet<PacketS2CDisconnect> {
 
     private final String reason;
@@ -27,8 +25,6 @@ public class PacketS2CDisconnect extends Packet<PacketS2CDisconnect> {
 
     @Override
     public Tag toTag() {
-        return Tag.of(Map.of(
-                "reason", Tag.of(reason)
-        ));
+        return Tag.of(Tag.mapBuilder().put("reason", Tag.of(reason)));
     }
 }

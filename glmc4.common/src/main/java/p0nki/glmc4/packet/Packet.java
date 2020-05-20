@@ -18,8 +18,6 @@ public abstract class Packet<T extends Packet<T>> implements TagSerializable {
 
     }
 
-    public abstract PacketType<T> getType();
-    
     public static Packet<?> read(IInputStream inputStream) throws IOException {
         Tag tag = Tag.read(inputStream);
         if (!tag.isMap()) return null;
@@ -30,6 +28,8 @@ public abstract class Packet<T extends Packet<T>> implements TagSerializable {
         System.err.println("UNKNOWN PACKET TYPE: " + name);
         return null;
     }
+
+    public abstract PacketType<T> getType();
 
     public final void write(IOutputStream outputStream) throws IOException {
         Tag.write(outputStream, Tag.of(ImmutableMap.<String, Tag>builder().put("name", Tag.of(getType().getName())).put("data", toTag()).build()));

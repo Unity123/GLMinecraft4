@@ -1,6 +1,5 @@
 package p0nki.glmc4.packet;
 
-import com.google.common.collect.ImmutableMap;
 import p0nki.glmc4.data.PlayerMetadata;
 import p0nki.glmc4.tag.Tag;
 import p0nki.glmc4.utils.TagSerializable;
@@ -39,7 +38,7 @@ public class PacketS2COnJoin extends Packet<PacketS2COnJoin> {
 
     @Override
     public Tag toTag() {
-        return Tag.of(ImmutableMap.<String, Tag>builder()
+        return Tag.of(Tag.mapBuilder()
                 .put("playerMetadata", playerMetadata.toTag())
                 .put("players", Tag.of(players.stream().map(TagSerializable::toTag).collect(Collectors.toList())))
                 .build());

@@ -48,14 +48,24 @@ public class Chunk implements BlockView, BlockWrite {
         return pos.containedBetween(BlockPos.Immutable.ORIGIN, BOUNDS);
     }
 
-    public static Chunk TEST_RENDER_CHUNK() {
+    private final static OpenSimplex2S os = new OpenSimplex2S(0);
+
+    public static Chunk TEST_RENDER_CHUNK(int cx, int cz) {
         Chunk chunk = new Chunk();
         BlockPos.Mutable bpos = BlockPos.Immutable.ORIGIN.toMutable();
         for (int x = 0; x < 16; x++) {
             bpos.setX(x);
             for (int z = 0; z < 16; z++) {
                 bpos.setZ(z);
-                int h = x + z;
+                int h = 30;
+                int rx = cx * 16 + x;
+                int rz = cz * 16 + z;
+                double scale = 0.1F;
+                h += 10 * os.noise2(rx * scale, rz * scale);
+//                if (x > 0) h += 5;
+//                if (z > 0) h += 3;
+                if (h < 0) h = 0;
+                if (h > 255) h = 255;
                 for (int y = 0; y < Math.max(0, h - 5); y++) chunk.set(bpos.setY(y), Blocks.STONE.getDefaultState());
                 for (int y = Math.max(0, h - 5); y < h; y++) chunk.set(bpos.setY(y), Blocks.DIRT.getDefaultState());
                 chunk.set(bpos.setY(h), Blocks.GRASS.getDefaultState());

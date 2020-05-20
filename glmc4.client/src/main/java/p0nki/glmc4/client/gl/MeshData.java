@@ -1,21 +1,16 @@
 package p0nki.glmc4.client.gl;
 
-import org.joml.Vector3f;
-
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class MeshData {
 
     private final List<Integer> triangles;
     private final List<BufferData> buffers;
-    private int vertCount;
 
     public MeshData() {
         triangles = new ArrayList<>();
         buffers = new ArrayList<>();
-        vertCount = 0;
     }
 
     public MeshData chunkRendering() {
@@ -36,24 +31,18 @@ public class MeshData {
         return data;
     }
 
-    public MeshData append(List<Integer> newTriangles, boolean adjust) {
-        if (adjust) {
-            this.triangles.addAll(newTriangles.stream().map(x -> x + vertCount).collect(Collectors.toList()));
-        } else {
-            this.triangles.addAll(newTriangles);
-        }
-        return this;
-    }
-
-    public MeshData incrementVertCount(int amount) {
-        vertCount += amount;
+    public MeshData append(List<Integer> newTriangles) {
+        this.triangles.addAll(newTriangles);
         return this;
     }
 
     public Mesh toMesh() {
         Mesh mesh = new Mesh();
         mesh.setIndices(triangles);
+        System.out.println();
+        System.out.println("TRI " + triangles.size() / 3);
         for (int i = 0; i < buffers.size(); i++) {
+            System.out.println(i + " " + buffers.get(i).data.size() + "/" + buffers.get(i).getSize() + " = " + (buffers.get(i).data.size() / buffers.get(i).getSize()));
             mesh.addBuffer(i, buffers.get(i).data, buffers.get(i).getSize());
         }
         return mesh;

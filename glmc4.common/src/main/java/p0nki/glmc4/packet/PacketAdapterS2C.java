@@ -1,7 +1,6 @@
 package p0nki.glmc4.packet;
 
-import static p0nki.glmc4.packet.Packets.S2C_PLAYER_CONNECT;
-import static p0nki.glmc4.packet.Packets.S2C_PLAYER_DISCONNECT;
+//import static p0nki.glmc4.packet.Packets.*;
 
 public class PacketAdapterS2C implements PacketListener {
 
@@ -25,6 +24,14 @@ public class PacketAdapterS2C implements PacketListener {
 
     }
 
+    public void onReceiveS2CLoadChunk(PacketS2CLoadChunk packet) {
+
+    }
+
+    public void onReceiveS2CUnloadChunk(PacketS2CUnloadChunk packet) {
+
+    }
+
     @Override
     public final void onReceive(Packet<?> packet) {
         PacketType<?> type = packet.getType();
@@ -34,10 +41,16 @@ public class PacketAdapterS2C implements PacketListener {
             onReceiveS2CDisconnect((PacketS2CDisconnect) packet);
         } else if (type == Packets.S2C_ON_JOIN) {
             onReceiveS2COnJoin((PacketS2COnJoin) packet);
-        } else if (type == S2C_PLAYER_CONNECT) {
+        } else if (type == Packets.S2C_PLAYER_CONNECT) {
             onReceiveS2CPlayerConnect((PacketS2CPlayerConnect) packet);
-        } else if (type == S2C_PLAYER_DISCONNECT) {
+        } else if (type == Packets.S2C_PLAYER_DISCONNECT) {
             onReceiveS2CPlayerDisconnect((PacketS2CPlayerDisconnect) packet);
+        } else if (type == Packets.S2C_LOAD_CHUNK) {
+            onReceiveS2CLoadChunk((PacketS2CLoadChunk) packet);
+        } else if (type == Packets.S2C_UNLOAD_CHUNK) {
+            onReceiveS2CUnloadChunk((PacketS2CUnloadChunk) packet);
+        } else {
+            throw new UnsupportedOperationException(type.getName());
         }
     }
 

@@ -30,18 +30,18 @@ public abstract class BlockRendererSimpleCube extends BlockRenderer {
     }
 
     private void meshSide(MeshData data, Direction direction) {
+        int n = data.buffer(0).data.size() / 3;
+        data.append(List.of(n, n + 1, n + 2, n + 1, n + 2, n + 3));
         data.buffer(0).append3f(List.of(
                 direction.getStart(),
                 direction.getStart().add(direction.getD0()),
                 direction.getStart().add(direction.getD1()),
                 direction.getStart().add(direction.getD0()).add(direction.getD1())
         ));
-        data.append(List.of(0, 1, 2, 1, 2, 3), true);
         data.buffer(1).append(genUVs(faces.get(direction).first));
         data.buffer(2).append(genColors(faces.get(direction).first));
         data.buffer(3).append(genUVs(faces.get(direction).second));
         data.buffer(4).append(genColors(faces.get(direction).second));
-        data.incrementVertCount(4);
     }
 
     @Override

@@ -1,6 +1,5 @@
 package p0nki.glmc4.packet;
 
-import com.google.common.collect.ImmutableMap;
 import p0nki.glmc4.data.PlayerMetadata;
 import p0nki.glmc4.tag.Tag;
 
@@ -27,6 +26,6 @@ public class PacketS2CPlayerConnect extends Packet<PacketS2CPlayerConnect> {
 
     @Override
     public Tag toTag() {
-        return Tag.of(ImmutableMap.<String, Tag>builder().put("connectedPlayer", connectedPlayer.toTag()).build());
+        return Tag.of(Tag.mapBuilder().put("connectedPlayer", connectedPlayer.toTag()).build());
     }
 }

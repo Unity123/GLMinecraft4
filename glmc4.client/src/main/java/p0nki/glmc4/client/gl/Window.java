@@ -35,6 +35,10 @@ public class Window {
         GL.createCapabilities();
     }
 
+    public static boolean isKeyDown(char key) {
+        return glfwGetKey(pointer, key) == GLFW_PRESS;
+    }
+
     public static void setTitle(String title) {
         glfwSetWindowTitle(pointer, title);
     }

@@ -18,7 +18,7 @@ public class PacketAdapterC2S implements PacketListener {
         } else if (type == Packets.C2S_PING) {
             onReceivePacketC2SPing((PacketC2SPing) packet);
         } else {
-            throw new IllegalArgumentException("Bad type: " + type.toString());
+            throw new UnsupportedOperationException(type.getName());
         }
     }
 

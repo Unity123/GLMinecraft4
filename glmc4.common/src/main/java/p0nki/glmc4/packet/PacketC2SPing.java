@@ -2,8 +2,6 @@ package p0nki.glmc4.packet;
 
 import p0nki.glmc4.tag.Tag;
 
-import java.util.Map;
-
 public class PacketC2SPing extends Packet<PacketC2SPing> {
 
     private final long timeSent;
@@ -27,8 +25,6 @@ public class PacketC2SPing extends Packet<PacketC2SPing> {
 
     @Override
     public Tag toTag() {
-        return Tag.of(Map.of(
-                "timeSent", Tag.of(timeSent)
-        ));
+        return Tag.of(Tag.mapBuilder().put("timeSent", Tag.of(timeSent)));
     }
 }

@@ -1,6 +1,5 @@
 package p0nki.glmc4.packet;
 
-import com.google.common.collect.ImmutableMap;
 import p0nki.glmc4.data.PlayerMetadata;
 import p0nki.glmc4.tag.Tag;
 
@@ -27,6 +26,6 @@ public class PacketS2CPlayerDisconnect extends Packet<PacketS2CPlayerDisconnect>
 
     @Override
     public Tag toTag() {
-        return Tag.of(ImmutableMap.<String, Tag>builder().put("disconnectedPlayer", disconnectedPlayer.toTag()).build());
+        return Tag.of(Tag.mapBuilder().put("disconnectedPlayer", disconnectedPlayer.toTag()).build());
     }
 }

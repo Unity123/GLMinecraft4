@@ -28,19 +28,16 @@ public class TextRenderer {
         data.append(List.of(
                 0, 1, 2,
                 1, 2, 3
-        ), false);
+        ));
         mesh = data.toMesh();
         texture = new Texture(new ResourceLocation("font.png"));
 //        texture = new Texture(new ResourceLocation("block/faces/xmi.png"));
     }
 
     private static void renderCharacter(char ch, float x, float y, float size) {
-//        int a = (ch / 16) + 2;
-//        int b = 16 - (ch % 16) - 1;
-        int a = ch % 16, b = ch / 16 + 1;
         shader.setVector2f("posOffset", new Vector2f(x, y));
         shader.setVector2f("posScale", new Vector2f(size));
-        shader.setVector2f("uvOffset", new Vector2f(a / 16.0F, b / 16.0F));
+        shader.setVector2f("uvOffset", new Vector2f((ch % 16) / 16.0F, ((int) (ch / 16) + 1) / 16.0F));
         shader.setVector2f("uvScale", new Vector2f(1.0F / 16.0F, -1 / 16.0F));
         mesh.render(RenderMode.TRIANGLES);
     }

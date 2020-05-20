@@ -19,6 +19,14 @@ public interface Tag {
         return new TagArray(value);
     }
 
+    static ImmutableMap.Builder<String, Tag> mapBuilder() {
+        return ImmutableMap.builder();
+    }
+
+    static TagMap of(ImmutableMap.Builder<String, Tag> builder) {
+        return of(builder.build());
+    }
+
     static TagArray of(Collection<Tag> value) {
         return of(value.toArray(Tag[]::new));
     }
