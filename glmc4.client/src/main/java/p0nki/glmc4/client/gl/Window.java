@@ -5,6 +5,7 @@ import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.opengl.GL;
 
 import static org.lwjgl.glfw.GLFW.*;
+import static org.lwjgl.opengl.GL41.*;
 
 public class Window {
 
@@ -30,9 +31,14 @@ public class Window {
         glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
         glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GLFW_TRUE);
         glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-        pointer = glfwCreateWindow(500, 500, "Title", 0, 0);
+        pointer = glfwCreateWindow(750, 750, "Title", 0, 0);
         glfwMakeContextCurrent(pointer);
         GL.createCapabilities();
+        System.out.println(glfwGetVersionString());
+        System.out.println(glGetInteger(GL_MAJOR_VERSION));
+        System.out.println(glGetInteger(GL_MINOR_VERSION));
+        System.out.println(glGetString(GL_VENDOR));
+        System.out.println(glGetString(GL_RENDERER));
     }
 
     public static boolean isKeyDown(char key) {
